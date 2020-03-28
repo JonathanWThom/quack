@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"log"
 	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -10,6 +11,14 @@ import (
 )
 
 var cfgFile string
+
+type logger func(args ...interface{})
+
+var logFunc logger
+
+func Log(logFunc logger, args ...interface{}) {
+	logFunc(args...)
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "quack",
@@ -42,6 +51,8 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	logFunc = log.Fatal
 }
 
 // initConfig reads in config file and ENV variables if set.

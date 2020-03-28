@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/jonathanwthom/quack/storage"
@@ -15,19 +14,28 @@ var newCmd = &cobra.Command{
 	Short: "Create a new entry",
 	Long: `Create a new entry like this:
 quack new These are my deepest darkest secrets...`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) > 280 {
-			log.Fatal("Message must be shorter than 280 characters.")
-		}
+	Run: NewRunner,
+}
 
-		msg := strings.Join(args, " ")
-		err := storage.Create(msg)
-		if err != nil {
-			log.Fatal("Failed to create entry.")
-		}
+// NewRunner wraps New for easier testing
+func NewRunner(cmd *cobra.Command, args []string) {
+	New(args...)
+}
 
-		fmt.Println("Entry saved.")
-	},
+// New creates and stores a new message
+func New(args ...string) {
+	msg := strings.Join(args, " ")
+
+	if len(msg) > 280 {
+		Log(logFunc, "Message must be shorter than 280 characters.")
+	}
+
+	err := storage.Create(msg)
+	if err != nil {
+		Log(logFunc, "Failed to create entry.")
+	}
+
+	fmt.Println("Entry saved.")
 }
 
 func init() {

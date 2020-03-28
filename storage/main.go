@@ -10,6 +10,7 @@ import (
 	"gocloud.dev/blob/fileblob"
 	"gocloud.dev/blob/s3blob"
 	"os"
+	"time"
 )
 
 // Create will save a message to the cloud, or a local file.
@@ -60,7 +61,7 @@ func writeToFile(ctx context.Context, msg string) error {
 }
 
 func writeToBucket(ctx context.Context, msg string, bucket *blob.Bucket) error {
-	w, err := bucket.NewWriter(ctx, msg, nil)
+	w, err := bucket.NewWriter(ctx, time.Now().String(), nil)
 	if err != nil {
 		return err
 	}
