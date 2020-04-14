@@ -4,13 +4,24 @@ import "testing"
 import "fmt"
 
 // stub out storage too
+// stub out printing
 
 func fakeLog(...interface{}) {
 	fmt.Println("it worked")
 }
 
+type fakeStorage struct{}
+
+func (s *fakeStorage) Create(msg string) error {
+	fmt.Println(msg)
+
+	return nil
+}
+
 func TestNew(t *testing.T) {
 	logFunc = fakeLog
+	store = new(fakeStorage)
+
 	var tests = []struct {
 		args   []string
 		output string

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/jonathanwthom/quack/storage"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
@@ -13,8 +14,12 @@ import (
 var cfgFile string
 
 type logger func(args ...interface{})
+type Store interface {
+	Create(string) error
+}
 
 var logFunc logger
+var store Store
 
 func Log(logFunc logger, args ...interface{}) {
 	logFunc(args...)
@@ -53,6 +58,7 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	logFunc = log.Fatal
+	store = new(storage.Storage)
 }
 
 // initConfig reads in config file and ENV variables if set.

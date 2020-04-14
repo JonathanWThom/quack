@@ -13,8 +13,10 @@ import (
 	"time"
 )
 
+type Storage struct{}
+
 // Create will save a message to the cloud, or a local file.
-func Create(msg string) error {
+func (s *Storage) Create(msg string) error {
 	ctx := context.Background()
 
 	if cloudConfigPresent() {

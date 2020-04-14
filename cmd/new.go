@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jonathanwthom/quack/storage"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +29,7 @@ func New(args ...string) {
 		Log(logFunc, "Message must be shorter than 280 characters.")
 	}
 
-	err := storage.Create(msg)
+	err := store.Create(msg)
 	if err != nil {
 		Log(logFunc, "Failed to create entry.")
 	}
