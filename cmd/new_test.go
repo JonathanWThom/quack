@@ -1,14 +1,10 @@
 package cmd
 
-import "testing"
-import "fmt"
-
-// stub out storage too
-// stub out printing
-
-func fakeLog(...interface{}) {
-	fmt.Println("it worked")
-}
+import (
+	"fmt"
+	"strings"
+	"testing"
+)
 
 type fakeStorage struct{}
 
@@ -19,28 +15,36 @@ func (s *fakeStorage) Create(msg string) error {
 }
 
 func TestNew(t *testing.T) {
-	logFunc = fakeLog
 	store = new(fakeStorage)
 
 	var tests = []struct {
-		args   []string
-		output string
+		args     string
+		expected string
 	}{
 		{
-			args:   []string{"valid", "entry"},
-			output: "Entry saved.",
+			args:     "valid entry",
+			expected: successMsg,
+		},
+		{
+			args: `
+				morethan280charactersmorethan280charactersmorethan280characters
+				morethan280charactersmorethan280charactersmorethan280characters
+				morethan280charactersmorethan280charactersmorethan280characters
+				morethan280charactersmorethan280charactersmorethan280characters
+				morethan280charactersmorethan280charactersmorethan280characters
+			`,
+			expected: tooManyCharsError,
 		},
 	}
 
 	for i := 0; i < len(tests); i++ {
 		test := tests[i]
-		args := test.args
-		output := test.output
-		var result string
-		New(args...)
+		args := strings.Split(test.args, " ")
+		expected := test.expected
+		actual := New(args...)
 
-		if result != output {
-			t.Errorf("cmd.New(%v) returned %s, expected %s", args, result, output)
+		if actual != expected {
+			t.Errorf("cmd.New(%v) returned %s, expected %s", args, actual, expected)
 		}
 	}
 }

@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"log"
 	"os"
 
 	"github.com/jonathanwthom/quack/storage"
@@ -13,17 +12,11 @@ import (
 
 var cfgFile string
 
-type logger func(args ...interface{})
 type Store interface {
 	Create(string) error
 }
 
-var logFunc logger
 var store Store
-
-func Log(logFunc logger, args ...interface{}) {
-	logFunc(args...)
-}
 
 var rootCmd = &cobra.Command{
 	Use:   "quack",
@@ -57,7 +50,6 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	logFunc = log.Fatal
 	store = new(storage.Storage)
 }
 

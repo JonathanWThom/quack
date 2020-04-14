@@ -7,6 +7,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	successMsg        = "Entry saved."
+	tooManyCharsError = "Message must be shorter than 280 characters."
+	storageError      = "Failed to create entry."
+)
+
 // newCmd represents the new command
 var newCmd = &cobra.Command{
 	Use:   "new",
@@ -18,23 +24,24 @@ quack new These are my deepest darkest secrets...`,
 
 // NewRunner wraps New for easier testing
 func NewRunner(cmd *cobra.Command, args []string) {
-	New(args...)
+	result := New(args...)
+	fmt.Println(result)
 }
 
 // New creates and stores a new message
-func New(args ...string) {
+func New(args ...string) string {
 	msg := strings.Join(args, " ")
 
 	if len(msg) > 280 {
-		Log(logFunc, "Message must be shorter than 280 characters.")
+		return tooManyCharsError
 	}
 
 	err := store.Create(msg)
 	if err != nil {
-		Log(logFunc, "Failed to create entry.")
+		return storageError
 	}
 
-	fmt.Println("Entry saved.")
+	return successMsg
 }
 
 func init() {
