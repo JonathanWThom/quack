@@ -39,39 +39,56 @@ func (s *Storage) Read() ([]string, error) {
 	return readFromFiles(ctx)
 }
 
-func readFromCloud(ctx context.Context) ([]string, error) {
-	// share this and context?
+func openCloudBucket(ctx context.Context) (*blob.Bucket, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("S3_BUCKET_REGION")),
 	})
 	if err != nil {
-		return []string{}, err
+		return new(blob.Bucket), err
 	}
 
 	bucket, err := s3blob.OpenBucket(ctx, sess, os.Getenv("S3_BUCKET_NAME"), nil)
 	if err != nil {
+		return bucket, err
+	}
+
+	return bucket, nil
+}
+
+func openFileBucket() (*blob.Bucket, error) {
+	homeDir, err := homedir.Dir()
+	if err != nil {
+		return new(blob.Bucket), err
+	}
+	dir := homeDir + "/quack"
+	if err := os.MkdirAll(dir, 0777); err != nil {
+		return new(blob.Bucket), err
+	}
+
+	bucket, err := fileblob.OpenBucket(dir, nil)
+	if err != nil {
+		return bucket, err
+	}
+
+	return bucket, nil
+}
+
+func readFromCloud(ctx context.Context) ([]string, error) {
+	bucket, err := openCloudBucket(ctx)
+	defer bucket.Close()
+	if err != nil {
 		return []string{}, err
 	}
-	defer bucket.Close()
 
 	return readFromBucket(ctx, bucket)
 }
 
 func readFromFiles(ctx context.Context) ([]string, error) {
-	homeDir, err := homedir.Dir()
-	if err != nil {
-		return []string{}, err
-	}
-	dir := homeDir + "/quack"
-	if err := os.MkdirAll(dir, 0777); err != nil {
-		return []string{}, err
-	}
-
-	bucket, err := fileblob.OpenBucket(dir, nil)
-	if err != nil {
-		return []string{}, err
-	}
+	bucket, err := openFileBucket()
 	defer bucket.Close()
+	if err != nil {
+		return []string{}, err
+	}
 
 	return readFromBucket(ctx, bucket)
 }
@@ -99,37 +116,21 @@ func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]string, error) 
 }
 
 func writeToCloud(ctx context.Context, msg string) error {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("S3_BUCKET_REGION")),
-	})
-	if err != nil {
-		return err
-	}
-
-	bucket, err := s3blob.OpenBucket(ctx, sess, os.Getenv("S3_BUCKET_NAME"), nil)
-	if err != nil {
-		return err
-	}
+	bucket, err := openCloudBucket(ctx)
 	defer bucket.Close()
+	if err != nil {
+		return err
+	}
 
 	return writeToBucket(ctx, msg, bucket)
 }
 
 func writeToFile(ctx context.Context, msg string) error {
-	homeDir, err := homedir.Dir()
-	if err != nil {
-		return err
-	}
-	dir := homeDir + "/quack"
-	if err := os.MkdirAll(dir, 0777); err != nil {
-		return err
-	}
-
-	bucket, err := fileblob.OpenBucket(dir, nil)
-	if err != nil {
-		return err
-	}
+	bucket, err := openFileBucket()
 	defer bucket.Close()
+	if err != nil {
+		return err
+	}
 
 	return writeToBucket(ctx, msg, bucket)
 }
