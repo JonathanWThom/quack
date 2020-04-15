@@ -2,7 +2,9 @@
 
 X = Done
 
-P = In Progress
+P = In progress
+
+C = Current task
 
 X 1. From the command line, I can log a [280 character] message. Save to s3 bucket or local file.
 
@@ -13,10 +15,12 @@ X 1. From the command line, I can log a [280 character] message. Save to s3 buck
 X 4. I can read all my messages.
 
 5. I can read the last N messages.
-    - Make N (10?) the default?
+
+    * Make N (10?) the default?
 
 P 6. I can view the day/time I wrote a message.
-    - Needs formatting.
+
+   * Needs formatting.
 
 7. I can delete a message.
 
@@ -25,6 +29,9 @@ P 6. I can view the day/time I wrote a message.
 9. I can search messages by date.
 
 P 10. All commands are tested
-    - Storage needs tests
-    - Read needs tests
-    - Should write tests with stubs for ReadRunner/NewRunner? 
+
+   * Storage needs tests
+    
+   * C Read needs tests
+    
+   * Should write tests with stubs for ReadRunner/NewRunner? 
