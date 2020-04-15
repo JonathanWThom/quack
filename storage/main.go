@@ -9,6 +9,8 @@ import (
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/fileblob"
 	"gocloud.dev/blob/s3blob"
+	"io"
+	"log"
 	"os"
 	"time"
 )
@@ -24,6 +26,61 @@ func (s *Storage) Create(msg string) error {
 	}
 
 	return writeToFile(ctx, msg)
+}
+
+// Read will read the content of all messages from the cloud or local file.
+func (s *Storage) Read() ([]string, error) {
+	ctx := context.Background()
+
+	if cloudConfigPresent() {
+		return readFromCloud(ctx)
+	}
+
+	return readFromFiles(ctx)
+}
+
+func readFromCloud(ctx context.Context) ([]string, error) {
+	// share this and context?
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(os.Getenv("S3_BUCKET_REGION")),
+	})
+	if err != nil {
+		return []string{}, err
+	}
+
+	bucket, err := s3blob.OpenBucket(ctx, sess, os.Getenv("S3_BUCKET_NAME"), nil)
+	if err != nil {
+		return []string{}, err
+	}
+	defer bucket.Close()
+
+	return readFromBucket(ctx, bucket)
+}
+
+func readFromFiles(ctx context.Context) ([]string, error) {
+	return []string{}, nil
+}
+
+func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]string, error) {
+	iter := bucket.List(nil)
+	var results []string
+	for {
+		obj, err := iter.Next(ctx)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err) // this should return error and exit
+		}
+		res, err := bucket.ReadAll(ctx, obj.Key)
+		if err != nil {
+			log.Fatal(err) // this should return error and exit
+		}
+
+		results = append(results, string(res))
+	}
+
+	return results, nil
 }
 
 func writeToCloud(ctx context.Context, msg string) error {
