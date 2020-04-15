@@ -18,7 +18,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"strings"
+	"sort"
 )
 
 // readCmd represents the read command
@@ -37,7 +37,13 @@ to quickly create a Cobra application.`,
 			fmt.Println(err)
 			return
 		}
-		fmt.Println(strings.Join(entries, "\n"))
+		sort.Slice(entries, func(i, j int) bool {
+			return entries[i].ModTime.After(entries[j].ModTime)
+		})
+		for i := 0; i < len(entries); i++ {
+			fmt.Println(entries[i].ModTime)
+			fmt.Println(entries[i].Content)
+		}
 	},
 }
 

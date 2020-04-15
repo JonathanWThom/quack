@@ -10,12 +10,15 @@ import (
 	"gocloud.dev/blob/fileblob"
 	"gocloud.dev/blob/s3blob"
 	"io"
-	"log"
 	"os"
 	"time"
 )
 
 type Storage struct{}
+type Entry struct {
+	ModTime time.Time
+	Content string
+}
 
 // Create will save a message to the cloud, or a local file.
 func (s *Storage) Create(msg string) error {
@@ -29,7 +32,7 @@ func (s *Storage) Create(msg string) error {
 }
 
 // Read will read the content of all messages from the cloud or local file.
-func (s *Storage) Read() ([]string, error) {
+func (s *Storage) Read() ([]Entry, error) {
 	ctx := context.Background()
 
 	if cloudConfigPresent() {
@@ -73,46 +76,51 @@ func openFileBucket() (*blob.Bucket, error) {
 	return bucket, nil
 }
 
-func readFromCloud(ctx context.Context) ([]string, error) {
+func readFromCloud(ctx context.Context) ([]Entry, error) {
 	bucket, err := openCloudBucket(ctx)
 	defer bucket.Close()
 	if err != nil {
-		return []string{}, err
+		return []Entry{}, err
 	}
 
 	return readFromBucket(ctx, bucket)
 }
 
-func readFromFiles(ctx context.Context) ([]string, error) {
+func readFromFiles(ctx context.Context) ([]Entry, error) {
 	bucket, err := openFileBucket()
 	defer bucket.Close()
 	if err != nil {
-		return []string{}, err
+		return []Entry{}, err
 	}
 
 	return readFromBucket(ctx, bucket)
 }
 
-func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]string, error) {
+func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]Entry, error) {
+	var entries []Entry
 	iter := bucket.List(nil)
-	var results []string
+
 	for {
 		obj, err := iter.Next(ctx)
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			log.Fatal(err) // this should return error and exit
+			return []Entry{}, err
 		}
 		res, err := bucket.ReadAll(ctx, obj.Key)
 		if err != nil {
-			log.Fatal(err) // this should return error and exit
+			return []Entry{}, err
 		}
 
-		results = append(results, string(res))
+		entry := Entry{
+			ModTime: obj.ModTime,
+			Content: string(res),
+		}
+		entries = append(entries, entry)
 	}
 
-	return results, nil
+	return entries, nil
 }
 
 func writeToCloud(ctx context.Context, msg string) error {

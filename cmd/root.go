@@ -14,7 +14,7 @@ var cfgFile string
 
 type Store interface {
 	Create(string) error
-	Read() ([]string, error)
+	Read() ([]storage.Entry, error)
 }
 
 var store Store
