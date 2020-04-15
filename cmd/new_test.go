@@ -1,18 +1,9 @@
 package cmd
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 )
-
-type fakeStorage struct{}
-
-func (s *fakeStorage) Create(msg string) error {
-	fmt.Println(msg)
-
-	return nil
-}
 
 func TestNew(t *testing.T) {
 	store = new(fakeStorage)
