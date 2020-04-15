@@ -58,7 +58,22 @@ func readFromCloud(ctx context.Context) ([]string, error) {
 }
 
 func readFromFiles(ctx context.Context) ([]string, error) {
-	return []string{}, nil
+	homeDir, err := homedir.Dir()
+	if err != nil {
+		return []string{}, err
+	}
+	dir := homeDir + "/quack"
+	if err := os.MkdirAll(dir, 0777); err != nil {
+		return []string{}, err
+	}
+
+	bucket, err := fileblob.OpenBucket(dir, nil)
+	if err != nil {
+		return []string{}, err
+	}
+	defer bucket.Close()
+
+	return readFromBucket(ctx, bucket)
 }
 
 func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]string, error) {
