@@ -31,7 +31,7 @@ func TestRead(t *testing.T) {
 				},
 			},
 			err:      nil,
-			expected: fmt.Sprintf("%s\n%s", "2009-11-10 23:00:00 +0000 UTC:", "Hello World!"),
+			expected: fmt.Sprintf("%s\n%s", "November 10nd, 2009 - 3:00 PM PST:", "Hello World!"),
 		},
 		{
 			entries:  []storage.Entry{},

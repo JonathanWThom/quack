@@ -32,4 +32,3 @@ P 10. All commands are tested
 
    * Storage needs tests
     
-   * Secure needs tests

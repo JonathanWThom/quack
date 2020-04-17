@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"sort"
 	"strings"
+	"time"
 )
 
 const (
@@ -38,16 +39,15 @@ func Read(args ...string) string {
 
 	var results []string
 
-	// TODO: handle a lot of entries
 	for i := 0; i < len(entries); i++ {
 		entry := entries[i]
-		// TODO: could this be a function on Entry type?
-		// might make sense to move out of storage if so
 		content, err := secure.Decrypt(entry.Content)
 		if err != nil {
 			return err.Error()
 		}
-		result := fmt.Sprintf("%v:\n%s", entry.ModTime, content)
+		loc := time.Now().Location()
+		formatted := entry.ModTime.In(loc).Format("January 2nd, 2006 - 3:04 PM MST")
+		result := fmt.Sprintf("%v:\n%s", formatted, content)
 		results = append(results, result)
 	}
 
