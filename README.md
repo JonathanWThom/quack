@@ -18,9 +18,7 @@ X 4. I can read all my messages.
 
     * Make N (10?) the default?
 
-P 6. I can view the day/time I wrote a message.
-
-   * Needs formatting.
+X 6. I can view the day/time I wrote a message.
 
 7. I can delete a message.
 
