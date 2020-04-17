@@ -39,4 +39,31 @@ func TestEncrypt(t *testing.T) {
 }
 
 func TestDecrypt(t *testing.T) {
+	tests := []struct {
+		expected  string
+		quackword string
+	}{
+		{
+			expected:  "foo",
+			quackword: "exists",
+		},
+		{
+			expected:  "",
+			quackword: "",
+		},
+	}
+
+	for i := 0; i < len(tests); i++ {
+		test := tests[i]
+		expected := test.expected
+		os.Setenv("QUACKWORD", "exists")
+		encrypted, _ := Encrypt(test.expected)
+		os.Setenv("QUACKWORD", test.quackword)
+
+		actual, _ := Decrypt(encrypted)
+
+		if actual != expected {
+			t.Errorf("Secure.Decrypt(%s) returned %s, expected %s", encrypted, actual, expected)
+		}
+	}
 }
