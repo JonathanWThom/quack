@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/jonathanwthom/quack/secure"
 	"github.com/spf13/cobra"
 	"sort"
 	"strings"
@@ -46,7 +47,13 @@ func Read(args ...string) string {
 		results = append(results, result)
 	}
 
-	return strings.Join(results, "\n")
+	// would it be better to do this higher up?
+	decrypted, err := secure.Decrypt(strings.Join(results, "\n"))
+	if err != nil {
+		return err.Error()
+	}
+
+	return decrypted
 }
 
 func init() {

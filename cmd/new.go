@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jonathanwthom/quack/secure"
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +37,12 @@ func New(args ...string) string {
 		return tooManyCharsError
 	}
 
-	err := store.Create(msg)
+	encrypted, err := secure.Encrypt(msg)
+	if err != nil {
+		return err.Error()
+	}
+
+	err = store.Create(encrypted)
 	if err != nil {
 		return storageError
 	}
