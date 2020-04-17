@@ -8,7 +8,7 @@ C = Current task
 
 X 1. From the command line, I can log a [280 character] message. Save to s3 bucket or local file.
 
-2. I can encrypt the message with a key I set.
+X 2. I can encrypt the message with a key I set.
 
 3. I can change my encryption key if I know the old one.
 
@@ -32,4 +32,4 @@ P 10. All commands are tested
 
    * Storage needs tests
     
-   * Should write tests with stubs for ReadRunner/NewRunner? 
+   * Secure needs tests
