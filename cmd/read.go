@@ -43,17 +43,15 @@ func Read(args ...string) string {
 		entry := entries[i]
 		// TODO: could this be a function on Entry type?
 		// might make sense to move out of storage if so
-		result := fmt.Sprintf("%v:\n%s", entry.ModTime, entry.Content)
+		content, err := secure.Decrypt(entry.Content)
+		if err != nil {
+			return err.Error()
+		}
+		result := fmt.Sprintf("%v:\n%s", entry.ModTime, content)
 		results = append(results, result)
 	}
 
-	// would it be better to do this higher up?
-	decrypted, err := secure.Decrypt(strings.Join(results, "\n"))
-	if err != nil {
-		return err.Error()
-	}
-
-	return decrypted
+	return strings.Join(results, "\n\n")
 }
 
 func init() {

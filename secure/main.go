@@ -1,13 +1,21 @@
 package secure
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/md5"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/hex"
 	"errors"
-	"fmt"
+	"io"
 	"os"
 )
 
 const (
-	setQuackwordError = "Please set QUACKWORD environment variable with `export QUACKWORD=securepassword`"
+	setQuackwordError    = "Please set QUACKWORD environment variable with `export QUACKWORD=securepassword`."
+	unableToDecryptError = "Failed to retrieve entries. Make sure your QUACKWORD environment variable is correct."
+	unableToEncryptError = "Entry failed to save."
 )
 
 func getQuackword() (string, error) {
@@ -19,26 +27,94 @@ func getQuackword() (string, error) {
 	return quackword, nil
 }
 
-func Encrypt(msg string) (string, error) {
-	// check for quackword existence
+// Decrypt reads a previously encrypted entry
+func Decrypt(msg string) (string, error) {
 	quackword, err := getQuackword()
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(quackword)
 
-	// encrypt with quackword here
-	return msg, nil
+	decrypted, err := decrypt(msg, quackword)
+	if err != nil {
+		return "", errors.New(unableToDecryptError)
+	}
+
+	return decrypted, nil
 }
 
-func Decrypt(msg string) (string, error) {
-	// check for quackward existence
+// Encypt encrypts an entry with the quackword
+func Encrypt(msg string) (string, error) {
 	quackword, err := getQuackword()
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(quackword)
 
-	// decrypt with quackward here
-	return msg, nil
+	encrypted, err := encrypt(msg, quackword)
+	if err != nil {
+		return "", errors.New(unableToEncryptError)
+	}
+
+	return encrypted, nil
+}
+
+func decrypt(data, quackword string) (string, error) {
+	decoded := decodeBase64(data)
+	key := []byte(createHash(quackword))
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
+	nonceSize := gcm.NonceSize()
+	nonce, ciphertext := decoded[:nonceSize], decoded[nonceSize:]
+	plaintext, err := gcm.Open(nil, []byte(nonce), []byte(ciphertext), nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(plaintext), nil
+}
+
+func encrypt(msg, quackword string) (string, error) {
+	key := []byte(createHash(quackword))
+	block, _ := aes.NewCipher(key)
+
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
+	nonce := make([]byte, gcm.NonceSize())
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+		return "", err
+	}
+
+	ciphertext := gcm.Seal(nonce, nonce, []byte(msg), nil)
+	cipherString := encodeBase64(ciphertext)
+
+	return cipherString, nil
+}
+
+func encodeBase64(b []byte) string {
+	return base64.StdEncoding.EncodeToString(b)
+}
+
+func decodeBase64(s string) []byte {
+	data, err := base64.StdEncoding.DecodeString(s)
+	if err != nil {
+		panic(err)
+	}
+	return data
+}
+
+func createHash(key string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(key))
+	return hex.EncodeToString(hasher.Sum(nil))
 }
