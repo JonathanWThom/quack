@@ -1,12 +1,14 @@
 package cmd
 
 import (
+	"os"
 	"strings"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
 	store = new(fakeStorage)
+	os.Setenv("QUACKWORD", "password")
 
 	var tests = []struct {
 		args     string

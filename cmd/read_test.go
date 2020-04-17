@@ -4,12 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jonathanwthom/quack/storage"
+	"os"
 	"testing"
 	"time"
 )
 
 func TestRead(t *testing.T) {
 	store = new(fakeStorage)
+	os.Setenv("QUACKWORD", "password")
 
 	tests := []struct {
 		entries  []storage.Entry
@@ -25,11 +27,11 @@ func TestRead(t *testing.T) {
 			entries: []storage.Entry{
 				{
 					ModTime: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
-					Content: "Hello World",
+					Content: "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
 				},
 			},
 			err:      nil,
-			expected: fmt.Sprintf("%s\n%s", "2009-11-10 23:00:00 +0000 UTC:", "Hello World"),
+			expected: fmt.Sprintf("%s\n%s", "2009-11-10 23:00:00 +0000 UTC:", "Hello World!"),
 		},
 		{
 			entries:  []storage.Entry{},
