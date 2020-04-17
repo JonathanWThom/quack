@@ -32,6 +32,4 @@ P 10. All commands are tested
 
    * Storage needs tests
     
-   * C Read needs tests
-    
    * Should write tests with stubs for ReadRunner/NewRunner? 
