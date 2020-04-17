@@ -10,6 +10,9 @@ func (s *fakeStorage) Create(msg string) error {
 	return nil
 }
 
+var entriesMock []storage.Entry
+var errorMock error
+
 func (s *fakeStorage) Read() ([]storage.Entry, error) {
-	return []storage.Entry{}, nil
+	return entriesMock, errorMock
 }

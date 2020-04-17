@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+const (
+	unableToReadError = "Unable to read entries."
+)
+
 // readCmd represents the read command
 var readCmd = &cobra.Command{
 	Use:   "read",
@@ -24,7 +28,7 @@ func ReadRunner(cmd *cobra.Command, args []string) {
 func Read(args ...string) string {
 	entries, err := store.Read()
 	if err != nil {
-		return "Unable to read entries"
+		return unableToReadError
 	}
 
 	sort.Slice(entries, func(i, j int) bool {
