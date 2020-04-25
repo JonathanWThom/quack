@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -18,6 +19,7 @@ type Storage struct{}
 type Entry struct {
 	ModTime time.Time
 	Content string
+	Key     string
 }
 
 // Create will save a message to the cloud, or a local file.
@@ -40,6 +42,95 @@ func (s *Storage) Read() ([]Entry, error) {
 	}
 
 	return readFromFiles(ctx)
+}
+
+// Read will read a single message from the cloud or local file, selected by
+// key.
+func (s *Storage) ReadByKey(key string) (Entry, error) {
+	ctx := context.Background()
+
+	if cloudConfigPresent() {
+		return readByKeyFromCloud(ctx, key)
+	}
+
+	return readByKeyFromFiles(ctx, key)
+}
+
+func readByKeyFromCloud(ctx context.Context, key string) (Entry, error) {
+	bucket, err := openCloudBucket(ctx)
+	defer bucket.Close()
+	if err != nil {
+		return Entry{}, err
+	}
+
+	return readFromBucketByKey(ctx, bucket, key)
+}
+
+func readFromBucketByKey(ctx context.Context, bucket *blob.Bucket, key string) (Entry, error) {
+	res, err := bucket.ReadAll(ctx, key)
+	if err != nil {
+		return Entry{}, err
+	}
+
+	entry := Entry{
+		// would be nice to get modtime
+		Content: string(res),
+		Key:     key,
+	}
+
+	return entry, nil
+}
+
+func readByKeyFromFiles(ctx context.Context, key string) (Entry, error) {
+	bucket, err := openFileBucket()
+	defer bucket.Close()
+	if err != nil {
+		return Entry{}, err
+	}
+
+	return readFromBucketByKey(ctx, bucket, key)
+}
+
+// Read will delete an entry by its unique key, from either the cloud or a local
+// file.
+func (s *Storage) Delete(key string) error {
+	ctx := context.Background()
+
+	if cloudConfigPresent() {
+		return deleteFromCloud(key, ctx)
+	}
+
+	return deleteFromFile(key, ctx)
+}
+
+func deleteFromCloud(key string, ctx context.Context) error {
+	bucket, err := openCloudBucket(ctx)
+	defer bucket.Close()
+	if err != nil {
+		return err
+	}
+
+	err = bucket.Delete(ctx, key)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func deleteFromFile(key string, ctx context.Context) error {
+	bucket, err := openFileBucket()
+	defer bucket.Close()
+	if err != nil {
+		return err
+	}
+
+	err = bucket.Delete(ctx, key)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func openCloudBucket(ctx context.Context) (*blob.Bucket, error) {
@@ -116,6 +207,7 @@ func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]Entry, error) {
 		entry := Entry{
 			ModTime: obj.ModTime,
 			Content: string(res),
+			Key:     obj.Key,
 		}
 		entries = append(entries, entry)
 	}
@@ -144,7 +236,9 @@ func writeToFile(ctx context.Context, msg string) error {
 }
 
 func writeToBucket(ctx context.Context, msg string, bucket *blob.Bucket) error {
-	w, err := bucket.NewWriter(ctx, time.Now().String(), nil)
+	sum := sha256.Sum256([]byte(time.Now().String()))
+	key := fmt.Sprintf("%x", sum)
+	w, err := bucket.NewWriter(ctx, key, nil)
 	if err != nil {
 		return err
 	}

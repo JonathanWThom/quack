@@ -13,6 +13,8 @@ const (
 	unableToReadError = "Unable to read entries."
 )
 
+var verbose bool
+
 // readCmd represents the read command
 var readCmd = &cobra.Command{
 	Use:   "read",
@@ -47,7 +49,13 @@ func Read(args ...string) string {
 		}
 		loc := time.Now().Location()
 		formatted := entry.ModTime.In(loc).Format("January 2nd, 2006 - 3:04 PM MST")
-		result := fmt.Sprintf("%v:\n%s", formatted, content)
+		var result string
+		if verbose == true {
+			key := entry.Key
+			result = fmt.Sprintf("%v - %s\n%s", formatted, key, content)
+		} else {
+			result = fmt.Sprintf("%v\n%s", formatted, content)
+		}
 		results = append(results, result)
 	}
 
@@ -56,4 +64,5 @@ func Read(args ...string) string {
 
 func init() {
 	rootCmd.AddCommand(readCmd)
+	readCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display messages in verbose mode")
 }
