@@ -16,3 +16,11 @@ var errorMock error
 func (s *fakeStorage) Read() ([]storage.Entry, error) {
 	return entriesMock, errorMock
 }
+
+func (s *fakeStorage) ReadByKey(key string) (storage.Entry, error) {
+	return storage.Entry{}, nil
+}
+
+func (s *fakeStorage) Delete(key string) error {
+	return nil
+}
