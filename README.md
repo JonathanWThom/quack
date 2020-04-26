@@ -1,3 +1,10 @@
+# Docker
+
+```
+$ docker build -t quack:latest .
+$ docker run -it --env-file .env quack:latest /bin/sh
+```
+
 # Features
 
 X = Done
@@ -44,3 +51,4 @@ P 10. All commands are tested
 
 12. I can use multiple cloud environments
     
+13. Setup Actions to run CI and build/publish dockerfile
