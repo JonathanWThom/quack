@@ -48,7 +48,7 @@ func Read(args ...string) string {
 			return err.Error()
 		}
 		loc := time.Now().Location()
-		formatted := entry.ModTime.In(loc).Format("January 2nd, 2006 - 3:04 PM MST")
+		formatted := entry.ModTime.In(loc).Format("January 2, 2006 - 3:04 PM MST")
 		var result string
 		if verbose == true {
 			key := entry.Key

@@ -12,6 +12,7 @@ import (
 func TestRead(t *testing.T) {
 	store = new(fakeStorage)
 	os.Setenv("QUACKWORD", "password")
+	zone, _ := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()).Zone()
 
 	tests := []struct {
 		entries  []storage.Entry
@@ -26,12 +27,12 @@ func TestRead(t *testing.T) {
 		{
 			entries: []storage.Entry{
 				{
-					ModTime: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+					ModTime: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
 					Content: "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
 				},
 			},
 			err:      nil,
-			expected: fmt.Sprintf("%s\n%s", "November 10nd, 2009 - 3:00 PM PST", "Hello World!"),
+			expected: fmt.Sprintf("%s - %s %s\n%s", "November 10, 2009", "11:00 PM", zone, "Hello World!"),
 		},
 		{
 			entries:  []storage.Entry{},
