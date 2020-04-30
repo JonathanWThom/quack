@@ -34,7 +34,7 @@ X 6. I can view the day/time I wrote a message.
 
 P 7. I can delete a message.
     
-    * Needs tests and docs.
+    * Needs docs.
 
 8. I can search messages by content.
 
