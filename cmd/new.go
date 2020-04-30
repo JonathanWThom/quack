@@ -20,7 +20,7 @@ var newCmd = &cobra.Command{
 	Short: "Create a new entry",
 	Long: `
 Create a new entry like this:
-quack new These are my deepest darkest secrets...`,
+quack new "These are my deepest darkest secrets..."`,
 	Run: NewRunner,
 }
 
