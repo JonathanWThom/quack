@@ -32,10 +32,8 @@ X 4. I can read all my messages.
 
 X 6. I can view the day/time I wrote a message.
 
-P 7. I can delete a message.
+X 7. I can delete a message.
     
-    * Needs docs.
-
 8. I can search messages by content.
 
 9. I can search messages by date.
