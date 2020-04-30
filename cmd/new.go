@@ -18,7 +18,8 @@ const (
 var newCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create a new entry",
-	Long: `Create a new entry like this:
+	Long: `
+Create a new entry like this:
 quack new These are my deepest darkest secrets...`,
 	Run: NewRunner,
 }

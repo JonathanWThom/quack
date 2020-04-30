@@ -19,7 +19,12 @@ var verbose bool
 var readCmd = &cobra.Command{
 	Use:   "read",
 	Short: "Read all entries",
-	Run:   ReadRunner,
+	Long: `
+Run quack read to see all entries in normal mode.
+Run quack read -v to read in verbose mode. Verbose mode
+includes each entry's unique identifier, which can be passed to
+quack delete`,
+	Run: ReadRunner,
 }
 
 // ReadRunner wraps Read for easier testing
