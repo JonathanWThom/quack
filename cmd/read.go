@@ -14,6 +14,7 @@ const (
 )
 
 var verbose bool
+var search string
 
 // readCmd represents the read command
 var readCmd = &cobra.Command{
@@ -49,6 +50,11 @@ func Read(args ...string) string {
 	for i := 0; i < len(entries); i++ {
 		entry := entries[i]
 		content, err := secure.Decrypt(entry.Content)
+
+		if search != "" && !strings.Contains(strings.ToLower(content), strings.ToLower(search)) {
+			continue
+		}
+
 		if err != nil {
 			return err.Error()
 		}
@@ -69,5 +75,6 @@ func Read(args ...string) string {
 
 func init() {
 	rootCmd.AddCommand(readCmd)
-	readCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display messages in verbose mode")
+	readCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display entries in verbose mode")
+	readCmd.Flags().StringVarP(&search, "search", "s", "", "Search entries by text")
 }

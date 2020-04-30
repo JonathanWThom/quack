@@ -34,7 +34,10 @@ X 6. I can view the day/time I wrote a message.
 
 X 7. I can delete a message.
     
-8. I can search messages by content.
+X 8. I can search messages by content.
+
+    * Search is "dumb" right now, and just does a text match. No indexing. Could
+      be better!
 
 9. I can search messages by date.
 
