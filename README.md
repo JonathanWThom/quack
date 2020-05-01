@@ -71,7 +71,9 @@ By far the easiest way to install Quack is with Docker.
 After cloning the repo, run `go build ./...` and then `./quack <some-command>`.
 Tests can be run with `go test ./...`. You can either set your environment
 variables within your shell session/environment, or within a `.env` file at the
-root of the project. This project uses the awesome [Cobra framework](https://github.com/spf13/cobra). 
+root of the project. This project uses the awesome [Cobra framework](https://github.com/spf13/cobra).
+
+The TODO list for the project can be found in [features.md](https://github.com/JonathanWThom/quack/blob/master/features.md).
 
 ## License
 
