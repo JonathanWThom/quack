@@ -2,7 +2,7 @@
 
 CLI for tweet-sized private journal entries.
 
-### What is it?
+## What is it?
 
 Let me start by saying that this is mostly a coding exercise for me, and the
 "usefulness" of this program might be neglible. But if I were to market Quack, I
@@ -10,7 +10,7 @@ would say something like "Quack is a secure, lightweight, private journaling
 application that aims be cloud-agnostic." Others might call it a CRUD app. 
 
 It works like this. You install Quack and run it with some variables present in
-the environment. One of those is your QUACKWORD, which is your keys to the
+the environment. One of those is your QUACKWORD, which is your key to the
 castle. When you enter a message, it is encrypted, and can only be read with the
 right QUACKWORD. If you include no other variables, each message is stored as a
 file in `$HOME/.quack`. If however, you include the credentials for an S3
@@ -19,7 +19,7 @@ to them (with Quack) from anywhere.
 
 Oh, and your messages can't be longer than 280 characters.    
 
-### Installation
+## Installation
 
 By far the easiest way to install Quack is with Docker.
 
@@ -38,7 +38,7 @@ By far the easiest way to install Quack is with Docker.
 
 3. Run an interactive shell in a container:
     ```
-    docker run -it --env-file .env docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh`
+    docker run -it --env-file .env docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh
     ```
 
     If you don't want to store your credentials in just a plain file, you can
@@ -51,7 +51,7 @@ By far the easiest way to install Quack is with Docker.
    messages to a volume.
 
    ```
-   docker run -it -e QUACKWORD=quacky -v $HOME/.quack:/root/quack docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh
+   docker run -it -e QUACKWORD=my-quaackword -v $HOME/.quack:/root/quack docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh
    ``` 
 
 5. The `quack` executable will be loaded. Run `quack -h` to see all options for
@@ -66,14 +66,14 @@ By far the easiest way to install Quack is with Docker.
    ```
    You can add `-h` to any command to read more, e.g. `quack read -h`
 
-### Development
+## Development
 
 After cloning the repo, run `go build ./...` and then `./quack <some-command>`.
 Tests can be run with `go test ./...`. You can either set your environment
 variables within your shell session/environment, or within a `.env` file at the
-root of the project. 
+root of the project. This project uses the awesome [Cobra framework](https://github.com/spf13/cobra). 
 
-### License
+## License
 
 Apache License 2.0
 
