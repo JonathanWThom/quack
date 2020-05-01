@@ -154,7 +154,7 @@ func openFileBucket() (*blob.Bucket, error) {
 	if err != nil {
 		return new(blob.Bucket), err
 	}
-	dir := homeDir + "/quack"
+	dir := homeDir + "/.quack"
 	if err := os.MkdirAll(dir, 0777); err != nil {
 		return new(blob.Bucket), err
 	}

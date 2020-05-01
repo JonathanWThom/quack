@@ -1,55 +1,79 @@
-# Docker
+# Quack
 
-```
-$ docker build -t quack:latest .
-$ docker run -it --env-file .env quack:latest /bin/sh
-```
+CLI for tweet-sized private journal entries.
 
-# Features
+### What is it?
 
-X = Done
+Let me start by saying that this is mostly a coding exercise for me, and the
+"usefulness" of this program might be neglible. But if I were to market Quack, I
+would say something like "Quack is a secure, lightweight, private journaling
+application that aims be cloud-agnostic." Others might call it a CRUD app. 
 
-P = In progress
+It works like this. You install Quack and run it with some variables present in
+the environment. One of those is your QUACKWORD, which is your keys to the
+castle. When you enter a message, it is encrypted, and can only be read with the
+right QUACKWORD. If you include no other variables, each message is stored as a
+file in `$HOME/.quack`. If however, you include the credentials for an S3
+bucket, your messages will be stored there, and you'll be able to read or write
+to them (with Quack) from anywhere.
 
-C = Current task
+Oh, and your messages can't be longer than 280 characters.    
 
-X 1. From the command line, I can log a [280 character] message. Save to s3 bucket or local file.
+### Installation
 
-    * This could be improved to not require quotes around characters that need
-      to be escaped (like ' or ?). Or just documentation of this fact.
+By far the easiest way to install Quack is with Docker.
 
-X 2. I can encrypt the message with a key I set.
+1. Pull the image: `docker pull
+   docker.pkg.github.com/jonathanwthom/quack/quack:latest`
 
-3. I can change my encryption key if I know the old one.
+2. Create a file to include your environment variables, e.g. `.env`. It could
+   look like this: 
+    ```
+    AWS_ACCESS_KEY_ID=<access-key-id-goes-here>
+    AWS_SECRET_ACCESS_KEY=<secret-access-key-goes-here>
+    S3_BUCKET_NAME=<s3-bucket-name-goes-here>
+    S3_BUCKET_REGION=<s3-bucket-region-goes-here>
+    QUACKWORD=<quackword-goes-here>
+    ```
 
-X 4. I can read all my messages.
+3. Run an interactive shell in a container:
+    ```
+    docker run -it --env-file .env docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh`
+    ```
 
-    * Should handle lots of messages, and list limit from AWS/Cloud
+    If you don't want to store your credentials in just a plain file, you can
+    pass them in on the fly to the container:
+    ```
+    docker run -it -e QUACKWORD=my-quackword ...etc 
+    ```
+ 
+4. If you want to run Docker, and not use the cloud, you'll need to persist your
+   messages to a volume.
 
-5. I can read the last N messages.
+   ```
+   docker run -it -e QUACKWORD=quacky -v $HOME/.quack:/root/quack docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh
+   ``` 
 
-    * Make N (10?) the default?
+5. The `quack` executable will be loaded. Run `quack -h` to see all options for
+   usage. Current options are:
+   ```
+   delete      Delete an entry
+   help        Help about any command
+   new         Create a new entry
+   read        Read all entries
+        -s, --search string   Search entries by text
+        -v, --verbose         Display entries in verbose mode
+   ```
+   You can add `-h` to any command to read more, e.g. `quack read -h`
 
-X 6. I can view the day/time I wrote a message.
+### Development
 
-X 7. I can delete a message.
-    
-X 8. I can search messages by content.
+After cloning the repo, run `go build ./...` and then `./quack <some-command>`.
+Tests can be run with `go test ./...`. You can either set your environment
+variables within your shell session/environment, or within a `.env` file at the
+root of the project. 
 
-    * Search is "dumb" right now, and just does a text match. No indexing. Could
-      be better!
+### License
 
-9. I can search messages by date.
+Apache License 2.0
 
-P 10. All commands are tested
-
-   * Storage needs tests
-    
-11. Cobra defaults are set properly
-    
-    * Specifically the config file - this should be the file we're creating
-      already for storage, if any.
-
-12. I can use multiple cloud environments
-    
-13. Setup Actions to run CI and build/publish dockerfile
