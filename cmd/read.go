@@ -13,6 +13,7 @@ const (
 
 var verbose bool
 var search string
+var date string
 
 // readCmd represents the read command
 var readCmd = &cobra.Command{
@@ -46,7 +47,8 @@ func Read(args ...string) string {
 	var results []string
 
 	for i := 0; i < len(entries); i++ {
-		result, err := entries[i].Format(verbose, search)
+		// should probably filter then format, in separate methods
+		result, err := entries[i].Format(verbose, search, date)
 		if err != nil {
 			return err.Error()
 		}
@@ -63,4 +65,5 @@ func init() {
 	rootCmd.AddCommand(readCmd)
 	readCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display entries in verbose mode")
 	readCmd.Flags().StringVarP(&search, "search", "s", "", "Search entries by text")
+	readCmd.Flags().StringVarP(&date, "date", "d", "", "Search entries by date in format:  \"March 9, 2020\"")
 }
