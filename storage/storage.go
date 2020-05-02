@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/jonathanwthom/quack/secure"
 	"github.com/mitchellh/go-homedir"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/fileblob"
 	"gocloud.dev/blob/s3blob"
 	"io"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -20,6 +22,29 @@ type Entry struct {
 	ModTime time.Time
 	Content string
 	Key     string
+}
+
+func (entry *Entry) Format(verbose bool, search string) (string, error) {
+	content, err := secure.Decrypt(entry.Content)
+
+	if err != nil {
+		return "", err
+	}
+
+	if search != "" && !strings.Contains(strings.ToLower(content), strings.ToLower(search)) {
+		return "", nil
+	}
+	loc := time.Now().Location()
+	formatted := entry.ModTime.In(loc).Format("January 2, 2006 - 3:04 PM MST")
+	var result string
+	if verbose == true {
+		key := entry.Key
+		result = fmt.Sprintf("%v - %s\n%s", formatted, key, content)
+	} else {
+		result = fmt.Sprintf("%v\n%s", formatted, content)
+	}
+
+	return result, nil
 }
 
 // Create will save a message to the cloud, or a local file.
