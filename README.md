@@ -21,7 +21,7 @@ Oh, and your messages can't be longer than 280 characters.
 
 ## Installation
 
-By far the easiest way to install Quack is with Docker.
+_By far the easiest way to install Quack is with Docker._
 
 1. Pull the image: `docker pull
    docker.pkg.github.com/jonathanwthom/quack/quack:latest`
@@ -51,7 +51,7 @@ By far the easiest way to install Quack is with Docker.
    messages to a volume.
 
    ```
-   docker run -it -e QUACKWORD=my-quaackword -v $HOME/.quack:/root/quack docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh
+   docker run -it -e QUACKWORD=my-quackword -v $HOME/.quack:/root/quack docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh
    ``` 
 
 5. The `quack` executable will be loaded. Run `quack -h` to see all options for
@@ -67,6 +67,26 @@ By far the easiest way to install Quack is with Docker.
         -n, --number int      Return last n entries
    ```
    You can add `-h` to any command to read more, e.g. `quack read -h`
+
+_If you have Go installed, you can also build from source._
+
+1. Clone the repo:
+    ```
+    git clone https://github.com/JonathanWThom/quack.git`
+    ```
+
+2. Move into the directory and set your environment variables:
+    ```
+    cd quack
+    echo "QUACKWORD=my-quackword" > .env
+    ```
+
+3. Add the binary to your PATH:
+    ```
+    go install
+    ```
+
+4. Invoke `quack` as above.
 
 ## Development
 
