@@ -18,6 +18,7 @@ func TestRead(t *testing.T) {
 		entries  []storage.Entry
 		err      error
 		expected string
+		number   int
 	}{
 		{
 			entries:  []storage.Entry{},
@@ -39,6 +40,21 @@ func TestRead(t *testing.T) {
 			err:      errors.New("AWS is down, time to panic"),
 			expected: unableToReadError,
 		},
+		{
+			entries: []storage.Entry{
+				{
+					ModTime: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+					Content: "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
+				},
+				{
+					ModTime: time.Date(2008, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+					Content: "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
+				},
+			},
+			err:      nil,
+			expected: fmt.Sprintf("%s - %s %s\n%s", "November 10, 2009", "11:00 PM", zone, "Hello World!"),
+			number:   1,
+		},
 	}
 
 	for i := 0; i < len(tests); i++ {
@@ -46,6 +62,7 @@ func TestRead(t *testing.T) {
 		expected := test.expected
 		entriesMock = test.entries
 		errorMock = test.err
+		number = test.number
 
 		actual := Read()
 

@@ -60,10 +60,11 @@ By far the easiest way to install Quack is with Docker.
    delete      Delete an entry
    help        Help about any command
    new         Create a new entry
-   read        Read all entries
+   read        Read last 10 entries 
         -s, --search string   Search entries by text
         -v, --verbose         Display entries in verbose mode
         -d, --date string     Search entries by date in format:  "March 9, 2020"
+        -n, --number int      Return last n entries
    ```
    You can add `-h` to any command to read more, e.g. `quack read -h`
 

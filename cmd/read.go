@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/jonathanwthom/quack/storage"
 	"github.com/spf13/cobra"
 	"sort"
 	"strings"
@@ -14,13 +15,15 @@ const (
 var verbose bool
 var search string
 var date string
+var number int
 
 // readCmd represents the read command
 var readCmd = &cobra.Command{
 	Use:   "read",
 	Short: "Read all entries",
 	Long: `
-Run quack read to see all entries in normal mode.
+Run quack read to see last 10 entries in normal mode.
+See more entries by passing the -n flag, e.g quack read -n 30 for last 30 entries.
 Run quack read -v to read in verbose mode. Verbose mode
 includes each entry's unique identifier, which can be passed to
 quack delete`,
@@ -46,8 +49,7 @@ func Read(args ...string) string {
 
 	var results []string
 
-	for i := 0; i < len(entries); i++ {
-		// should probably filter then format, in separate methods
+	for i := 0; i < count(entries); i++ {
 		result, err := entries[i].Transform(verbose, search, date)
 		if err != nil {
 			return err.Error()
@@ -61,9 +63,20 @@ func Read(args ...string) string {
 	return strings.Join(results, "\n\n")
 }
 
+func count(entries []storage.Entry) int {
+	if number != 0 && number <= len(entries) {
+		return number
+	} else if len(entries) < 10 {
+		return len(entries)
+	}
+
+	return 10
+}
+
 func init() {
 	rootCmd.AddCommand(readCmd)
 	readCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display entries in verbose mode")
 	readCmd.Flags().StringVarP(&search, "search", "s", "", "Search entries by text")
 	readCmd.Flags().StringVarP(&date, "date", "d", "", "Search entries by date in format:  \"March 9, 2020\"")
+	readCmd.Flags().IntVarP(&number, "number", "n", 0, "Return last n entries")
 }

@@ -20,7 +20,7 @@ X 4. I can read all my messages.
 
     * Should handle lots of messages, and list limit from AWS/Cloud
 
-5. I can read the last N messages.
+X 5. I can read the last N messages.
 
     * Make N (10?) the default?
 
