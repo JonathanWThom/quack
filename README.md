@@ -75,6 +75,12 @@ _If you have Go installed, you can also build from source._
     git clone https://github.com/JonathanWThom/quack.git`
     ```
 
+    OR
+
+    ```
+    git clone git@github.com:JonathanWThom/quack.git
+    ```
+
 2. Move into the directory and set your environment variables:
     ```
     cd quack
