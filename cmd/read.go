@@ -48,7 +48,7 @@ func Read(args ...string) string {
 
 	for i := 0; i < len(entries); i++ {
 		// should probably filter then format, in separate methods
-		result, err := entries[i].Format(verbose, search, date)
+		result, err := entries[i].Transform(verbose, search, date)
 		if err != nil {
 			return err.Error()
 		}
