@@ -44,6 +44,9 @@ P 10. All commands are tested
     * Specifically the config file - this should be the file we're creating
       already for storage, if any.
 
-12. I can use multiple cloud environments
+P 12. I can use multiple cloud environments
     
+    * Move cloudEnv related code to own file and add tests.
+
+    * Azure next
 X 13. Setup Actions to run CI and build/publish dockerfile
