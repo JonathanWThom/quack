@@ -7,7 +7,7 @@ CLI for tweet-sized private journal entries.
 Let me start by saying that this is mostly a coding exercise for me, and the
 "usefulness" of this program might be neglible. But if I were to market Quack, I
 would say something like "Quack is a secure, lightweight, private journaling
-application that aims be cloud-agnostic." Others might call it a CRUD app. 
+application that aims to be cloud-agnostic." Others might call it a CRUD app. 
 
 It works like this. You install Quack and run it with some variables present in
 the environment. One of those is your QUACKWORD, which is your key to the
