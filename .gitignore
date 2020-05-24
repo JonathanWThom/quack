@@ -2,3 +2,4 @@
 quack
 *.swp
 *.swo
+.google-application-credentials.json

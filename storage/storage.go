@@ -9,13 +9,43 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/fileblob"
+	_ "gocloud.dev/blob/gcsblob"
 	"gocloud.dev/blob/s3blob"
 	"io"
 	"os"
 	"time"
 )
 
+var amazonVars = []string{
+	"S3_BUCKET_REGION",
+	"S3_BUCKET_NAME",
+	"AWS_ACCESS_KEY_ID",
+	"AWS_SECRET_ACCESS_KEY",
+}
+
+var googleVars = []string{
+	"GOOGLE_APPLICATION_CREDENTIALS",
+	"GOOGLE_BUCKET_NAME",
+}
+
+const amazon = "amazon"
+const google = "google"
+
 type Storage struct{}
+
+type cloudEnv struct {
+	name string
+}
+
+func (c *cloudEnv) amazon() bool {
+	return c.name == amazon
+}
+
+func (c *cloudEnv) google() bool {
+	return c.name == google
+}
+
+var cloud cloudEnv
 
 // Create will save a message to the cloud, or a local file.
 func (s *Storage) Create(msg string) error {
@@ -129,19 +159,18 @@ func deleteFromFile(key string, ctx context.Context) error {
 }
 
 func openCloudBucket(ctx context.Context) (*blob.Bucket, error) {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("S3_BUCKET_REGION")),
-	})
-	if err != nil {
-		return new(blob.Bucket), err
+	if cloud.amazon() {
+		sess, err := session.NewSession(&aws.Config{
+			Region: aws.String(os.Getenv("S3_BUCKET_REGION")),
+		})
+		if err != nil {
+			return new(blob.Bucket), err
+		}
+
+		return s3blob.OpenBucket(ctx, sess, os.Getenv("S3_BUCKET_NAME"), nil)
 	}
 
-	bucket, err := s3blob.OpenBucket(ctx, sess, os.Getenv("S3_BUCKET_NAME"), nil)
-	if err != nil {
-		return bucket, err
-	}
-
-	return bucket, nil
+	return blob.OpenBucket(ctx, "gs://"+os.Getenv("GOOGLE_BUCKET_NAME"))
 }
 
 func openFileBucket() (*blob.Bucket, error) {
@@ -249,14 +278,7 @@ func writeToBucket(ctx context.Context, msg string, bucket *blob.Bucket) error {
 	return nil
 }
 
-func cloudConfigPresent() bool {
-	params := []string{
-		"S3_BUCKET_REGION",
-		"S3_BUCKET_NAME",
-		"AWS_ACCESS_KEY_ID",
-		"AWS_SECRET_ACCESS_KEY",
-	}
-
+func allVarsPresent(params []string) bool {
 	result := true
 	for i := 0; i < len(params); i++ {
 		if os.Getenv(params[i]) == "" {
@@ -266,4 +288,21 @@ func cloudConfigPresent() bool {
 	}
 
 	return result
+}
+
+func (c *cloudEnv) setName() {
+	if allVarsPresent(amazonVars) {
+		c.name = amazon
+	} else if allVarsPresent(googleVars) {
+		c.name = google
+	}
+}
+
+//would be nice to memoize?
+func cloudConfigPresent() bool {
+	if cloud.name == "" {
+		cloud.setName()
+	}
+
+	return cloud.name != ""
 }

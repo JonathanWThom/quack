@@ -13,11 +13,11 @@ It works like this. You install Quack and run it with some variables present in
 the environment. One of those is your QUACKWORD, which is your key to the
 castle. When you enter a message, it is encrypted, and can only be read with the
 right QUACKWORD. If you include no other variables, each message is stored as a
-file in `$HOME/.quack`. If however, you include the credentials for an S3
-bucket, your messages will be stored there, and you'll be able to read or write
+file in `$HOME/.quack`. If however, you include the credentials for an S3 or
+GCS Bucket, your messages will be stored there, and you'll be able to read or write
 to them (with Quack) from anywhere.
 
-Oh, and your messages can't be longer than 280 characters.    
+Oh, and your messages can't be longer than 280 characters.
 
 ## Installation
 
@@ -26,8 +26,9 @@ _By far the easiest way to install Quack is with Docker._
 1. Pull the image: `docker pull
    docker.pkg.github.com/jonathanwthom/quack/quack:latest`
 
-2. Create a file to include your environment variables, e.g. `.env`. It could
-   look like this: 
+2. Create a file to include your environment variables, e.g. `.env`.
+
+    For AWS storage:
     ```
     AWS_ACCESS_KEY_ID=<access-key-id-goes-here>
     AWS_SECRET_ACCESS_KEY=<secret-access-key-goes-here>
@@ -35,10 +36,28 @@ _By far the easiest way to install Quack is with Docker._
     S3_BUCKET_REGION=<s3-bucket-region-goes-here>
     QUACKWORD=<quackword-goes-here>
     ```
+    
+    For Google Cloud storage:
+    ```
+    GOOGLE_BUCKET_NAME=<gcs-bucket-name-goes-here>
+    GOOGLE_APPLICATION_CREDENTIALS=<path-to-application-credentials-json-goes-here>
+    QUACKWORD=<quackword-goes-here>
+    ```
+
+    For local filesystem storage
+    ```
+    QUACKWORD=<quackword-goes-here>
+    ```
 
 3. Run an interactive shell in a container:
+    For AWS:
     ```
     docker run -it --env-file .env docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh
+    ```
+
+    For Google Cloud, include credentials file as a volume:
+    ```
+    docker run -it --env-file .env -v $(pwd)/.google-application-credentials.json:/.google-application-credentials.json blah /bin/sh
     ```
 
     If you don't want to store your credentials in just a plain file, you can
