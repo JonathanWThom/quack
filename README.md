@@ -44,7 +44,7 @@ _By far the easiest way to install Quack is with Docker._
     QUACKWORD=<quackword-goes-here>
     ```
 
-    For local filesystem storage
+    For local filesystem storage:
     ```
     QUACKWORD=<quackword-goes-here>
     ```
@@ -57,7 +57,7 @@ _By far the easiest way to install Quack is with Docker._
 
     For Google Cloud, include credentials file as a volume:
     ```
-    docker run -it --env-file .env -v $(pwd)/.google-application-credentials.json:/.google-application-credentials.json blah /bin/sh
+    docker run -it --env-file .env -v $(pwd)/.google-application-credentials.json:/.google-application-credentials.json docker.pkg.github.com/jonathanwthom/quack/quack:latest /bin/sh
     ```
 
     If you don't want to store your credentials in just a plain file, you can
@@ -111,7 +111,7 @@ _If you have Go installed, you can also build from source._
     go install
     ```
 
-4. Invoke `quack` as above.
+4. Invoke `quack` as described above.
 
 ## Development
 
