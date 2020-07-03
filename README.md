@@ -30,17 +30,17 @@ _By far the easiest way to install Quack is with Docker._
 
     For AWS storage:
     ```
-    AWS_ACCESS_KEY_ID=<access-key-id-goes-here>
-    AWS_SECRET_ACCESS_KEY=<secret-access-key-goes-here>
-    S3_BUCKET_NAME=<s3-bucket-name-goes-here>
-    S3_BUCKET_REGION=<s3-bucket-region-goes-here>
+    QUACK_AWS_ACCESS_KEY_ID=<access-key-id-goes-here>
+    QUACK_AWS_SECRET_ACCESS_KEY=<secret-access-key-goes-here>
+    QUACK_S3_BUCKET_NAME=<s3-bucket-name-goes-here>
+    QUACK_S3_BUCKET_REGION=<s3-bucket-region-goes-here>
     QUACKWORD=<quackword-goes-here>
     ```
     
     For Google Cloud storage:
     ```
-    GOOGLE_BUCKET_NAME=<gcs-bucket-name-goes-here>
-    GOOGLE_APPLICATION_CREDENTIALS=<path-to-application-credentials-json-goes-here>
+    QUACK_GOOGLE_BUCKET_NAME=<gcs-bucket-name-goes-here>
+    QUACK_GOOGLE_APPLICATION_CREDENTIALS=<path-to-application-credentials-json-goes-here>
     QUACKWORD=<quackword-goes-here>
     ```
 
@@ -100,15 +100,20 @@ _If you have Go installed, you can also build from source._
     git clone git@github.com:JonathanWThom/quack.git
     ```
 
-2. Move into the directory and set your environment variables:
+2. Move into the directory and install the binary:
     ```
     cd quack
-    echo "QUACKWORD=my-quackword" > .env
+    go install
     ```
 
-3. Add the binary to your PATH:
+3. Add the the appropriate environment variables to your shell configuration
+   file. E.g. in .zshrc, add:
     ```
-    go install
+    export QUACK_AWS_ACCESS_KEY_ID=<access-key-id-goes-here>
+    export QUACK_AWS_SECRET_ACCESS_KEY=<secret-access-key-goes-here>
+    export QUACK_S3_BUCKET_NAME=<s3-bucket-name-goes-here>
+    export QUACK_S3_BUCKET_REGION=<s3-bucket-region-goes-here>
+    export QUACKWORD=<quackword-goes-here>
     ```
 
 4. Invoke `quack` as described above.
