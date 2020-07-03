@@ -17,7 +17,6 @@ type Entry struct {
 func (entry *Entry) SetDecryptedContent() error {
 	content, err := secure.Decrypt(entry.Content)
 	if err != nil {
-		fmt.Println(entry)
 		return err
 	}
 
