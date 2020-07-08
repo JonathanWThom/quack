@@ -262,7 +262,11 @@ func writeToFile(ctx context.Context, msg string) error {
 func writeToBucket(ctx context.Context, msg string, bucket *blob.Bucket) error {
 	sum := sha256.Sum256([]byte(time.Now().String()))
 	key := fmt.Sprintf("%x", sum)
-	w, err := bucket.NewWriter(ctx, key, nil)
+	// don't do this if it already exists
+	// read from this to display dates instead of modTime
+	metadata := map[string]string{"createdAt": time.Now().String()}
+	options := blob.WriterOptions{Metadata: metadata}
+	w, err := bucket.NewWriter(ctx, key, &options)
 	if err != nil {
 		return err
 	}

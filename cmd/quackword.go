@@ -5,7 +5,6 @@ import (
 
 	"github.com/jonathanwthom/quack/secure"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 const (
