@@ -57,6 +57,16 @@ func Encrypt(msg string) (string, error) {
 	return encrypted, nil
 }
 
+// EncyptWithNewQuackword encrypts an entry with a passed in quackword
+func EncryptWithNewQuackword(msg string, quackword string) (string, error) {
+	encrypted, err := encrypt(msg, quackword)
+	if err != nil {
+		return "", errors.New(unableToEncryptError)
+	}
+
+	return encrypted, nil
+}
+
 func decrypt(data, quackword string) (string, error) {
 	decoded := decodeBase64(data)
 	key := []byte(createHash(quackword))

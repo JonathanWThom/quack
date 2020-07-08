@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/jonathanwthom/quack/secure"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 const (
@@ -42,10 +44,33 @@ func Quackword(args ...string) string {
 	}
 
 	newQuackword := args[0]
+	entries, err := store.Read()
+	if err != nil {
+		return err.Error()
+	}
+
+	// order this?
+	for i := 0; i < len(entries); i++ {
+		entry := entries[i]
+		decrypted, err := secure.Decrypt(entry.Content)
+		if err != nil {
+			// should probably be a friendly message
+			return err.Error()
+		}
+
+		encrypted, err := secure.EncryptWithNewQuackword(decrypted, newQuackword)
+		if err != nil {
+			return err.Error()
+		}
+
+		// This will work, but will lose all timing data
+		store.Create(encrypted)
+	}
 
 	// Read old entries and rewrite them with new quackword
 	// Make sure no other metadata changes, if possible
-	return newQuackword
+
+	return "Add a note about setting new quackword in permanent environmentenvironment"
 }
 
 func init() {
