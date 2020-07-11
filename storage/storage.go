@@ -243,14 +243,10 @@ func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]Entry, error) {
 			return []Entry{}, err
 		}
 
-		fmt.Println(attr.Metadata)
 		rawCreatedAt := attr.Metadata["createdat"]
-		fmt.Println(rawCreatedAt)
-		layout := "Mon Jan 2 15:04:05 -0700 MST 2006"
 		createdAt, err := time.Parse(layout, rawCreatedAt)
 
 		if err != nil {
-			fmt.Println(err)
 			return []Entry{}, err
 		}
 
@@ -306,7 +302,6 @@ func updateToFile(ctx context.Context, e Entry) error {
 }
 
 func updateToBucket(ctx context.Context, e Entry, bucket *blob.Bucket) error {
-	layout := "Mon Jan 2 15:04:05 -0700 MST 2006"
 	metadata := map[string]string{"createdAt": e.CreatedAt.Format(layout)}
 	options := blob.WriterOptions{Metadata: metadata}
 	w, err := bucket.NewWriter(ctx, e.Key, &options)
@@ -331,7 +326,7 @@ func writeToBucket(ctx context.Context, msg string, bucket *blob.Bucket) error {
 	// don't do this if it already exists
 	// read from this to display dates instead of modTime
 	// share format
-	metadata := map[string]string{"createdAt": time.Now().Format("Mon Jan 2 15:04:05 -0700 MST 2006")}
+	metadata := map[string]string{"createdAt": time.Now().Format(layout)}
 	options := blob.WriterOptions{Metadata: metadata}
 	w, err := bucket.NewWriter(ctx, key, &options)
 	if err != nil {
