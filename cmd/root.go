@@ -12,6 +12,7 @@ import (
 
 var cfgFile string
 
+// Store has all CRUD methods and can be stubbed in tests
 type Store interface {
 	Create(string) error
 	Read() ([]storage.Entry, error)
@@ -20,6 +21,7 @@ type Store interface {
 	Update(storage.Entry) error
 }
 
+// Store is the global storage object
 var store Store
 
 var rootCmd = &cobra.Command{

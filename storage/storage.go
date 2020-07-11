@@ -9,6 +9,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/fileblob"
+	// gcsblob is needed but only called indirectly
 	_ "gocloud.dev/blob/gcsblob"
 	"gocloud.dev/blob/s3blob"
 	"io"
@@ -31,6 +32,7 @@ var googleVars = []string{
 const amazon = "amazon"
 const google = "google"
 
+// Storage implement all CRUD methods
 type Storage struct{}
 
 type cloudEnv struct {
@@ -58,6 +60,7 @@ func (s *Storage) Create(msg string) error {
 	return writeToFile(ctx, msg)
 }
 
+// Update rewrites and entry in storage
 func (s *Storage) Update(e Entry) error {
 	ctx := context.Background()
 
@@ -79,7 +82,7 @@ func (s *Storage) Read() ([]Entry, error) {
 	return readFromFiles(ctx)
 }
 
-// Read will read a single message from the cloud or local file, selected by
+// ReadByKey will read a single message from the cloud or local file, selected by
 // key.
 func (s *Storage) ReadByKey(key string) (Entry, error) {
 	ctx := context.Background()
@@ -126,19 +129,19 @@ func readByKeyFromFiles(ctx context.Context, key string) (Entry, error) {
 	return readFromBucketByKey(ctx, bucket, key)
 }
 
-// Read will delete an entry by its unique key, from either the cloud or a local
+// Delete will delete an entry by its unique key, from either the cloud or a local
 // file.
 func (s *Storage) Delete(key string) error {
 	ctx := context.Background()
 
 	if cloudConfigPresent() {
-		return deleteFromCloud(key, ctx)
+		return deleteFromCloud(ctx, key)
 	}
 
-	return deleteFromFile(key, ctx)
+	return deleteFromFile(ctx, key)
 }
 
-func deleteFromCloud(key string, ctx context.Context) error {
+func deleteFromCloud(ctx context.Context, key string) error {
 	bucket, err := openCloudBucket(ctx)
 	defer bucket.Close()
 	if err != nil {
@@ -153,7 +156,7 @@ func deleteFromCloud(key string, ctx context.Context) error {
 	return nil
 }
 
-func deleteFromFile(key string, ctx context.Context) error {
+func deleteFromFile(ctx context.Context, key string) error {
 	bucket, err := openFileBucket()
 	defer bucket.Close()
 	if err != nil {

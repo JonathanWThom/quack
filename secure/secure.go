@@ -42,7 +42,7 @@ func Decrypt(msg string) (string, error) {
 	return decrypted, nil
 }
 
-// Encypt encrypts an entry with the quackword
+// Encrypt encrypts an entry with the quackword
 func Encrypt(msg string) (string, error) {
 	quackword, err := getQuackword()
 	if err != nil {
@@ -57,7 +57,7 @@ func Encrypt(msg string) (string, error) {
 	return encrypted, nil
 }
 
-// EncyptWithNewQuackword encrypts an entry with a passed in quackword
+// EncryptWithNewQuackword encrypts an entry with a passed in quackword
 func EncryptWithNewQuackword(msg string, quackword string) (string, error) {
 	encrypted, err := encrypt(msg, quackword)
 	if err != nil {

@@ -19,14 +19,15 @@ var deleteCmd = &cobra.Command{
 	Long: `
 Delete an entry by running quack delete <unique-id>.
 The unique id of an entry can be found by running quack read -v`,
-	Run: DeleteRunner,
+	Run: deleteRunner,
 }
 
-func DeleteRunner(cmd *cobra.Command, args []string) {
+func deleteRunner(cmd *cobra.Command, args []string) {
 	result := Delete(args...)
 	fmt.Println(result)
 }
 
+// Delete removes entries by key
 func Delete(args ...string) string {
 	key := args[0]
 	entry, err := store.ReadByKey(key)
