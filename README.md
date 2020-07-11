@@ -2,7 +2,7 @@
 
 CLI for tweet-sized private journal entries.
 
-![Build](https://github.com/JonathanWThom/quack/workflows/Docker/badge.svg)
+![Build](https://github.com/JonathanWThom/quack/workflows/Build/badge.svg)
 
 ## What is it?
 
