@@ -14,7 +14,9 @@ X 1. From the command line, I can log a [280 character] message. Save to s3 buck
 
 X 2. I can encrypt the message with a key I set.
 
-3. I can change my encryption key if I know the old one.
+P 3. I can change my encryption key if I know the old one.
+    
+    * Needs tests
 
 X 4. I can read all my messages.
 
@@ -38,9 +40,9 @@ X 9. I can search messages by date.
 P 10. All commands are tested
 
    * Storage needs tests
-    
+ 
 11. Cobra defaults are set properly
-    
+
     * Specifically the config file - this should be the file we're creating
       already for storage, if any.
 
@@ -50,3 +52,5 @@ P 12. I can use multiple cloud environments
 
     * Azure next
 X 13. Setup Actions to run CI and build/publish dockerfile
+
+14. Allow public/private key encryption instead of symmetric
