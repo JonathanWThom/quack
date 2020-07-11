@@ -19,8 +19,8 @@ func TestTransform(t *testing.T) {
 	}{
 		{
 			entry: Entry{
-				ModTime: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
-				Content: "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
+				CreatedAt: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+				Content:   "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
 			},
 			verbose:  false,
 			search:   "",
@@ -63,7 +63,7 @@ func TestFilter(t *testing.T) {
 		{
 			entry: Entry{
 				DecryptedContent: "Foo",
-				ModTime:          time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+				CreatedAt:        time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
 			},
 			search:   "",
 			date:     "",
@@ -72,7 +72,7 @@ func TestFilter(t *testing.T) {
 		{
 			entry: Entry{
 				DecryptedContent: "Foo",
-				ModTime:          time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+				CreatedAt:        time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
 			},
 			search:   "Foo",
 			date:     "",
@@ -81,7 +81,7 @@ func TestFilter(t *testing.T) {
 		{
 			entry: Entry{
 				DecryptedContent: "Foo",
-				ModTime:          time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+				CreatedAt:        time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
 			},
 			search:   "Bar",
 			date:     "",
@@ -90,7 +90,7 @@ func TestFilter(t *testing.T) {
 		{
 			entry: Entry{
 				DecryptedContent: "Foo",
-				ModTime:          time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+				CreatedAt:        time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
 			},
 			search:   "",
 			date:     "November 10, 2009",
@@ -99,7 +99,7 @@ func TestFilter(t *testing.T) {
 		{
 			entry: Entry{
 				DecryptedContent: "Foo",
-				ModTime:          time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+				CreatedAt:        time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
 			},
 			search:   "",
 			date:     "November 11, 2009",
@@ -140,7 +140,7 @@ func TestFormat(t *testing.T) {
 	}{
 		{
 			entry: Entry{
-				ModTime:          time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+				CreatedAt:        time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
 				DecryptedContent: "Oh hey there",
 				Key:              "obfuscatedkey",
 			},
@@ -149,7 +149,7 @@ func TestFormat(t *testing.T) {
 		},
 		{
 			entry: Entry{
-				ModTime:          time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+				CreatedAt:        time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
 				DecryptedContent: "Oh hey there",
 				Key:              "obfuscatedkey",
 			},

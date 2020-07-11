@@ -17,6 +17,7 @@ type Store interface {
 	Read() ([]storage.Entry, error)
 	ReadByKey(string) (storage.Entry, error)
 	Delete(string) error
+	Update(storage.Entry) error
 }
 
 var store Store

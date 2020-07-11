@@ -28,8 +28,8 @@ func TestRead(t *testing.T) {
 		{
 			entries: []storage.Entry{
 				{
-					ModTime: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
-					Content: "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
+					CreatedAt: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+					Content:   "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
 				},
 			},
 			err:      nil,
@@ -43,12 +43,12 @@ func TestRead(t *testing.T) {
 		{
 			entries: []storage.Entry{
 				{
-					ModTime: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
-					Content: "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
+					CreatedAt: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+					Content:   "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
 				},
 				{
-					ModTime: time.Date(2008, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
-					Content: "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
+					CreatedAt: time.Date(2008, time.November, 10, 23, 0, 0, 0, time.Now().Location()),
+					Content:   "7ruS7L8Ksk8bHCtpWp1+OOJ0N9z92Xr5fFUJHARiTWwXpQwaJ6iBLQ==",
 				},
 			},
 			err:      nil,

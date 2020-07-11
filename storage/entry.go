@@ -8,7 +8,7 @@ import (
 )
 
 type Entry struct {
-	ModTime          time.Time
+	CreatedAt        time.Time
 	Content          string
 	Key              string
 	DecryptedContent string
@@ -25,7 +25,7 @@ func (entry *Entry) SetDecryptedContent() error {
 }
 
 func (entry *Entry) Filter(search, date string) (*Entry, bool) {
-	if date != "" && entry.ModTime.Format("January 2, 2006") != date {
+	if date != "" && entry.CreatedAt.Format("January 2, 2006") != date {
 		return entry, false
 	}
 
@@ -52,7 +52,7 @@ func (entry *Entry) Transform(verbose bool, search string, date string) (string,
 
 func (entry *Entry) Format(verbose bool) (string, error) {
 	loc := time.Now().Location()
-	formatted := entry.ModTime.In(loc).Format("January 2, 2006 - 3:04 PM MST")
+	formatted := entry.CreatedAt.In(loc).Format("January 2, 2006 - 3:04 PM MST")
 	var result string
 	if verbose == true {
 		key := entry.Key

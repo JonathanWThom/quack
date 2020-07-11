@@ -58,6 +58,16 @@ func (s *Storage) Create(msg string) error {
 	return writeToFile(ctx, msg)
 }
 
+func (s *Storage) Update(e Entry) error {
+	ctx := context.Background()
+
+	if cloudConfigPresent() {
+		return updateToCloud(ctx, e)
+	}
+
+	return updateToFile(ctx, e)
+}
+
 // Read will read the content of all messages from the cloud or local file.
 func (s *Storage) Read() ([]Entry, error) {
 	ctx := context.Background()
@@ -228,10 +238,26 @@ func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]Entry, error) {
 			return []Entry{}, err
 		}
 
+		attr, err := bucket.Attributes(ctx, obj.Key)
+		if err != nil {
+			return []Entry{}, err
+		}
+
+		fmt.Println(attr.Metadata)
+		rawCreatedAt := attr.Metadata["createdat"]
+		fmt.Println(rawCreatedAt)
+		layout := "Mon Jan 2 15:04:05 -0700 MST 2006"
+		createdAt, err := time.Parse(layout, rawCreatedAt)
+
+		if err != nil {
+			fmt.Println(err)
+			return []Entry{}, err
+		}
+
 		entry := Entry{
-			ModTime: obj.ModTime,
-			Content: string(res),
-			Key:     obj.Key,
+			CreatedAt: createdAt,
+			Content:   string(res),
+			Key:       obj.Key,
 		}
 		entries = append(entries, entry)
 	}
@@ -249,6 +275,16 @@ func writeToCloud(ctx context.Context, msg string) error {
 	return writeToBucket(ctx, msg, bucket)
 }
 
+func updateToCloud(ctx context.Context, e Entry) error {
+	bucket, err := openCloudBucket(ctx)
+	defer bucket.Close()
+	if err != nil {
+		return err
+	}
+
+	return updateToBucket(ctx, e, bucket)
+}
+
 func writeToFile(ctx context.Context, msg string) error {
 	bucket, err := openFileBucket()
 	defer bucket.Close()
@@ -259,12 +295,43 @@ func writeToFile(ctx context.Context, msg string) error {
 	return writeToBucket(ctx, msg, bucket)
 }
 
+func updateToFile(ctx context.Context, e Entry) error {
+	bucket, err := openFileBucket()
+	defer bucket.Close()
+	if err != nil {
+		return err
+	}
+
+	return updateToBucket(ctx, e, bucket)
+}
+
+func updateToBucket(ctx context.Context, e Entry, bucket *blob.Bucket) error {
+	layout := "Mon Jan 2 15:04:05 -0700 MST 2006"
+	metadata := map[string]string{"createdAt": e.CreatedAt.Format(layout)}
+	options := blob.WriterOptions{Metadata: metadata}
+	w, err := bucket.NewWriter(ctx, e.Key, &options)
+	if err != nil {
+		return err
+	}
+	_, writeErr := fmt.Fprintln(w, e.Content)
+	closeErr := w.Close()
+	if writeErr != nil {
+		return writeErr
+	}
+	if closeErr != nil {
+		return closeErr
+	}
+
+	return nil
+}
+
 func writeToBucket(ctx context.Context, msg string, bucket *blob.Bucket) error {
 	sum := sha256.Sum256([]byte(time.Now().String()))
 	key := fmt.Sprintf("%x", sum)
 	// don't do this if it already exists
 	// read from this to display dates instead of modTime
-	metadata := map[string]string{"createdAt": time.Now().String()}
+	// share format
+	metadata := map[string]string{"createdAt": time.Now().Format("Mon Jan 2 15:04:05 -0700 MST 2006")}
 	options := blob.WriterOptions{Metadata: metadata}
 	w, err := bucket.NewWriter(ctx, key, &options)
 	if err != nil {

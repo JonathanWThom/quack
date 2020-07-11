@@ -62,8 +62,8 @@ func Quackword(args ...string) string {
 			return err.Error()
 		}
 
-		// This will work, but will lose all timing data
-		store.Create(encrypted)
+		entry.Content = encrypted
+		store.Update(entry)
 	}
 
 	// Read old entries and rewrite them with new quackword

@@ -44,7 +44,7 @@ func Read(args ...string) string {
 	}
 
 	sort.Slice(entries, func(i, j int) bool {
-		return entries[i].ModTime.After(entries[j].ModTime)
+		return entries[i].CreatedAt.After(entries[j].CreatedAt)
 	})
 
 	var results []string
