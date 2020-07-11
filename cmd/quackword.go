@@ -10,6 +10,8 @@ import (
 const (
 	newQuackwordError   = "Please specify a new QUACKWORD."
 	multiQuackwordError = "Please enter multi-word QUACKWORD in quotations."
+	updateSuccess       = "Successfully updated QUACKWORD. Please update QUACKWORD in your shell environment."
+	unableToUpdateError = "Unable to update QUACKWORD."
 )
 
 // quackwordCmd represents the quackword command
@@ -45,31 +47,26 @@ func Quackword(args ...string) string {
 	newQuackword := args[0]
 	entries, err := store.Read()
 	if err != nil {
-		return err.Error()
+		return unableToReadError
 	}
 
-	// order this?
 	for i := 0; i < len(entries); i++ {
 		entry := entries[i]
 		decrypted, err := secure.Decrypt(entry.Content)
 		if err != nil {
-			// should probably be a friendly message
-			return err.Error()
+			return unableToUpdateError
 		}
 
 		encrypted, err := secure.EncryptWithNewQuackword(decrypted, newQuackword)
 		if err != nil {
-			return err.Error()
+			return unableToUpdateError
 		}
 
 		entry.Content = encrypted
 		store.Update(entry)
 	}
 
-	// Read old entries and rewrite them with new quackword
-	// Make sure no other metadata changes, if possible
-
-	return "Add a note about setting new quackword in permanent environmentenvironment"
+	return updateSuccess
 }
 
 func init() {
