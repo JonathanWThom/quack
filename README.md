@@ -79,6 +79,7 @@ _By far the easiest way to install Quack is with Docker._
    delete      Delete an entry
    help        Help about any command
    new         Create a new entry
+   quackword   Reset your QUACKWORD
    read        Read last 10 entries 
         -s, --search string   Search entries by text
         -v, --verbose         Display entries in verbose mode
