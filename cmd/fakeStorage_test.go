@@ -27,3 +27,7 @@ func (s *fakeStorage) ReadByKey(key string) (storage.Entry, error) {
 func (s *fakeStorage) Delete(key string) error {
 	return nil
 }
+
+func (s *fakeStorage) Update(e storage.Entry) error {
+	return nil
+}
