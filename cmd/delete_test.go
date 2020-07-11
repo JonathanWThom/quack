@@ -20,12 +20,12 @@ func TestDelete(t *testing.T) {
 	}{
 		{
 			args:               "found-key",
-			expected:           "Entry deleted.",
+			expected:           deleteSuccessMsg,
 			readByKeyMock:      "found entry content",
 			readByKeyErrorMock: nil,
 		}, {
 			args:               "not-found-key",
-			expected:           "Unable to delete entry.",
+			expected:           unableToDeleteError,
 			readByKeyMock:      "",
 			readByKeyErrorMock: errors.New("can't find that"),
 		},

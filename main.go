@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// If .env file exists, use that, otherwise, use variables from OS
-	godotenv.Load()
+	_ = godotenv.Load()
 
 	cmd.Execute()
 }

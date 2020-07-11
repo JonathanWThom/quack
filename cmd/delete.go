@@ -45,7 +45,7 @@ func Delete(args ...string) string {
 		return unableToDeleteError
 	}
 
-	return "Entry deleted."
+	return deleteSuccessMsg
 }
 
 func init() {

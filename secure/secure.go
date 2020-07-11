@@ -69,7 +69,11 @@ func EncryptWithNewQuackword(msg string, quackword string) (string, error) {
 
 func decrypt(data, quackword string) (string, error) {
 	decoded := decodeBase64(data)
-	key := []byte(createHash(quackword))
+	hash, err := createHash(quackword)
+	if err != nil {
+		return "", err
+	}
+	key := []byte(hash)
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -92,7 +96,11 @@ func decrypt(data, quackword string) (string, error) {
 }
 
 func encrypt(msg, quackword string) (string, error) {
-	key := []byte(createHash(quackword))
+	hash, err := createHash(quackword)
+	if err != nil {
+		return "", err
+	}
+	key := []byte(hash)
 	block, _ := aes.NewCipher(key)
 
 	gcm, err := cipher.NewGCM(block)
@@ -123,8 +131,12 @@ func decodeBase64(s string) []byte {
 	return data
 }
 
-func createHash(key string) string {
+func createHash(key string) (string, error) {
 	hasher := md5.New()
-	hasher.Write([]byte(key))
-	return hex.EncodeToString(hasher.Sum(nil))
+	_, err := hasher.Write([]byte(key))
+	if err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(hasher.Sum(nil)), nil
 }

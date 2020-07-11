@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v1.2.1
+
       - name: Run tests and build image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME 
 

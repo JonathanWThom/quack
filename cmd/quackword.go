@@ -65,7 +65,10 @@ func Quackword(args ...string) string {
 		}
 
 		entry.Content = encrypted
-		store.Update(entry)
+		err = store.Update(entry)
+		if err != nil {
+			return unableToUpdateError
+		}
 	}
 
 	return updateSuccess

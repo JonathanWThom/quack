@@ -61,7 +61,7 @@ func (entry *Entry) Format(verbose bool) (string, error) {
 	loc := time.Now().Location()
 	formatted := entry.CreatedAt.In(loc).Format("January 2, 2006 - 3:04 PM MST")
 	var result string
-	if verbose == true {
+	if verbose {
 		key := entry.Key
 		result = fmt.Sprintf("%v - %s\n%s", formatted, key, entry.DecryptedContent)
 	} else {

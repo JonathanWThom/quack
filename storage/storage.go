@@ -43,10 +43,6 @@ func (c *cloudEnv) amazon() bool {
 	return c.name == amazon
 }
 
-func (c *cloudEnv) google() bool {
-	return c.name == google
-}
-
 var cloud cloudEnv
 
 // Create will save a message to the cloud, or a local file.
@@ -96,10 +92,10 @@ func (s *Storage) ReadByKey(key string) (Entry, error) {
 
 func readByKeyFromCloud(ctx context.Context, key string) (Entry, error) {
 	bucket, err := openCloudBucket(ctx)
-	defer bucket.Close()
 	if err != nil {
 		return Entry{}, err
 	}
+	defer bucket.Close()
 
 	return readFromBucketByKey(ctx, bucket, key)
 }
@@ -121,10 +117,10 @@ func readFromBucketByKey(ctx context.Context, bucket *blob.Bucket, key string) (
 
 func readByKeyFromFiles(ctx context.Context, key string) (Entry, error) {
 	bucket, err := openFileBucket()
-	defer bucket.Close()
 	if err != nil {
 		return Entry{}, err
 	}
+	defer bucket.Close()
 
 	return readFromBucketByKey(ctx, bucket, key)
 }
@@ -143,10 +139,10 @@ func (s *Storage) Delete(key string) error {
 
 func deleteFromCloud(ctx context.Context, key string) error {
 	bucket, err := openCloudBucket(ctx)
-	defer bucket.Close()
 	if err != nil {
 		return err
 	}
+	defer bucket.Close()
 
 	err = bucket.Delete(ctx, key)
 	if err != nil {
@@ -158,10 +154,10 @@ func deleteFromCloud(ctx context.Context, key string) error {
 
 func deleteFromFile(ctx context.Context, key string) error {
 	bucket, err := openFileBucket()
-	defer bucket.Close()
 	if err != nil {
 		return err
 	}
+	defer bucket.Close()
 
 	err = bucket.Delete(ctx, key)
 	if err != nil {
@@ -206,20 +202,20 @@ func openFileBucket() (*blob.Bucket, error) {
 
 func readFromCloud(ctx context.Context) ([]Entry, error) {
 	bucket, err := openCloudBucket(ctx)
-	defer bucket.Close()
 	if err != nil {
 		return []Entry{}, err
 	}
+	defer bucket.Close()
 
 	return readFromBucket(ctx, bucket)
 }
 
 func readFromFiles(ctx context.Context) ([]Entry, error) {
 	bucket, err := openFileBucket()
-	defer bucket.Close()
 	if err != nil {
 		return []Entry{}, err
 	}
+	defer bucket.Close()
 
 	return readFromBucket(ctx, bucket)
 }
@@ -266,40 +262,40 @@ func readFromBucket(ctx context.Context, bucket *blob.Bucket) ([]Entry, error) {
 
 func writeToCloud(ctx context.Context, msg string) error {
 	bucket, err := openCloudBucket(ctx)
-	defer bucket.Close()
 	if err != nil {
 		return err
 	}
+	defer bucket.Close()
 
 	return writeToBucket(ctx, msg, bucket)
 }
 
 func updateToCloud(ctx context.Context, e Entry) error {
 	bucket, err := openCloudBucket(ctx)
-	defer bucket.Close()
 	if err != nil {
 		return err
 	}
+	defer bucket.Close()
 
 	return updateToBucket(ctx, e, bucket)
 }
 
 func writeToFile(ctx context.Context, msg string) error {
 	bucket, err := openFileBucket()
-	defer bucket.Close()
 	if err != nil {
 		return err
 	}
+	defer bucket.Close()
 
 	return writeToBucket(ctx, msg, bucket)
 }
 
 func updateToFile(ctx context.Context, e Entry) error {
 	bucket, err := openFileBucket()
-	defer bucket.Close()
 	if err != nil {
 		return err
 	}
+	defer bucket.Close()
 
 	return updateToBucket(ctx, e, bucket)
 }
