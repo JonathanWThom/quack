@@ -50,6 +50,8 @@ func Quackword(args ...string) string {
 		return unableToReadError
 	}
 
+	fmt.Println("entries")
+	fmt.Println(entries)
 	for i := 0; i < len(entries); i++ {
 		entry := entries[i]
 		decrypted, err := secure.Decrypt(entry.Content)
