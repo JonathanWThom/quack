@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"errors"
-	"github.com/jonathanwthom/quack/secure"
-	"github.com/jonathanwthom/quack/storage"
 	"os"
 	"testing"
+
+	"github.com/jonathanwthom/quack/secure"
+	"github.com/jonathanwthom/quack/storage"
 )
 
 func TestDelete(t *testing.T) {
@@ -17,34 +18,38 @@ func TestDelete(t *testing.T) {
 		expected           string
 		readByKeyMock      string
 		readByKeyErrorMock error
+		description        string
 	}{
 		{
 			args:               "found-key",
 			expected:           deleteSuccessMsg,
 			readByKeyMock:      "found entry content",
 			readByKeyErrorMock: nil,
+			description:        "when key to delete is found",
 		}, {
 			args:               "not-found-key",
 			expected:           unableToDeleteError,
 			readByKeyMock:      "",
 			readByKeyErrorMock: errors.New("can't find that"),
+			description:        "when key to delete is not found",
 		},
 	}
 
-	for i := 0; i < len(tests); i++ {
-		test := tests[i]
-		expected := test.expected
-		args := test.args
-		encrypted, _ := secure.Encrypt(test.readByKeyMock)
-		readByKeyMock = storage.Entry{
-			Content: encrypted,
-		}
-		readByKeyErrorMock = test.readByKeyErrorMock
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			expected := test.expected
+			args := test.args
+			encrypted, _ := secure.Encrypt(test.readByKeyMock)
+			readByKeyMock = storage.Entry{
+				Content: encrypted,
+			}
+			readByKeyErrorMock = test.readByKeyErrorMock
 
-		actual := Delete(args)
+			actual := Delete(args)
 
-		if actual != expected {
-			t.Errorf("cmd.Delete(%v) returned %s, expected %s", args, actual, expected)
-		}
+			if actual != expected {
+				t.Errorf("cmd.Delete(%v) returned %s, expected %s", args, actual, expected)
+			}
+		})
 	}
 }
